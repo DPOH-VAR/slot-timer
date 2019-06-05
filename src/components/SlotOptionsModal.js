@@ -11,6 +11,16 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import Slot from "./Slot";
 
+const timeodifierButtonsData = [
+	{time: 10*1000, timeValue: '0:00:10'},
+	{time: 30*60*1000, timeValue: '0:30:00'},
+	{time: 60*60*1000, timeValue: '1:00:00'},
+	{time: 90*60*1000, timeValue: '1:30:00'},
+	{time: 120*60*1000, timeValue: '2:00:00'},
+	{time: 150*60*1000, timeValue: '2:30:00'},
+	{time: 180*60*1000, timeValue: '3:00:00'},
+];
+
 class SlotOptionsModal extends Component {
 	render() {
 		const {slot, index} = this.props;
@@ -23,14 +33,12 @@ class SlotOptionsModal extends Component {
 				<div>
 					<Slot slot={slot} index={index}/>
 					{(slotWait || !slotLate) && <div>
-						<button onClick={this.addTime(10*1000)}>+10 cекунд</button>
-						<button onClick={this.addTime(30*60*1000)}>+30 минут</button>
-						<button onClick={this.addTime(60*60*1000)}>+60 минут</button>
-						<button onClick={this.addTime(90*60*1000)}>+90 минут</button>
-						<button onClick={this.addTime(120*60*1000)}>+120 минут</button>
-						<button onClick={this.clearSlot}>Очистить</button>
+						{timeodifierButtonsData.map(({time, timeValue}, key) => <div key={key}>
+							<button onClick={this.addTime(time)}>+ {timeValue}</button>
+						</div>)}
 					</div>}
-					{(slotLate) && <div>
+
+					{(slotWait || slotLate) && <div>
 						<button onClick={this.clearSlot}>Очистить</button>
 					</div>}
 

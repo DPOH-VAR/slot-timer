@@ -59,13 +59,15 @@ code {
   left: 0;
   background: rgba(0,0,0,0.8);
   z-index: 99999;
-  -webkit-transition: opacity 400ms ease-in;
-  -moz-transition: opacity 400ms ease-in;
-  transition: opacity 400ms ease-in;
+  -webkit-transition: opacity 400ms ease-in, display 400ms ease-in;
+  -moz-transition: opacity 400ms ease-in, display 400ms ease-in;
+  transition: opacity 400ms ease-in, display 400ms ease-in;
   display: none;
+  opacity: 0;
 }
 
 .modalDialog.open {
+  opacity: 1;
   display: block;
   pointer-events: auto;
 }

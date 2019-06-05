@@ -2,6 +2,7 @@ import React, {Component, Fragment} from "react";
 import {connect} from 'react-redux';
 import {getSlotCount} from "../selectors/selectors";
 import PropTypes from "prop-types";
+import Alarm from "./Alarm";
 import SlotOptionsModal from "./SlotOptionsModal";
 import Slots from "./Slots";
 
@@ -13,6 +14,7 @@ class Main extends Component {
 		return <Fragment>
 			<Slots/>
 			<SlotOptionsModal/>
+			<Alarm/>
 		</Fragment>
 	}
 
