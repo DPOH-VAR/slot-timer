@@ -5,21 +5,12 @@ import addSlotTime from "../actionCreators/addSlotTime";
 import clearSlot from "../actionCreators/clearSlot";
 import closeSlotOptionsModal from "../actionCreators/closeSlotOptionsModal";
 import openSlotOptionsModal from "../actionCreators/openSlotOptionsModal";
+import setSlotTime from "../actionCreators/setSlotTime";
 import injectDate from "../HOCs/injectDate";
 import {getSlotOptionsModalIndex, getSlots} from "../selectors/selectors";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import Slot from "./Slot";
-
-const timeodifierButtonsData = [
-	{time: 10*1000, timeValue: '0:00:10'},
-	{time: 30*60*1000, timeValue: '0:30:00'},
-	{time: 60*60*1000, timeValue: '1:00:00'},
-	{time: 90*60*1000, timeValue: '1:30:00'},
-	{time: 120*60*1000, timeValue: '2:00:00'},
-	{time: 150*60*1000, timeValue: '2:30:00'},
-	{time: 180*60*1000, timeValue: '3:00:00'},
-];
 
 class SlotOptionsModal extends Component {
 	render() {
@@ -29,31 +20,49 @@ class SlotOptionsModal extends Component {
 		const slotWait = dateDiff != null && dateDiff > 0;
 		const slotLate = dateDiff != null && dateDiff <= 0;
 		return (
-			<div className={classNames("modalDialog", {open: modalOpen})}>
-				<div>
-					<Slot slot={slot} index={index}/>
-					{(slotWait || !slotLate) && <div>
-						{timeodifierButtonsData.map(({time, timeValue}, key) => <div key={key}>
-							<button onClick={this.addTime(time)}>+ {timeValue}</button>
-						</div>)}
-					</div>}
+			<div onClick={this.close} className={classNames("modalDialog", {open: modalOpen})}>
+				<div onClick={this.stopPropagation} className="center">
+					<div className="btn-group">
+						<Slot slot={slot} index={index}/>
+					</div>
+					<div className="btn-group">
+						<button className="btn btn-blue btn-long" onClick={this.addTime(30*60*1000)}>+ 30:00</button>
+						<button className="btn btn-blue btn-long" onClick={this.addTime(- 30*60*1000)}>- 30:00</button>
+					</div>
 
-					{(slotWait || slotLate) && <div>
-						<button onClick={this.clearSlot}>Очистить</button>
-					</div>}
+					<div className="btn-group">
+						<button className="btn btn-blue btn-tall" onClick={this.setTime(90*60*1000)}>1:30</button>
+						<button className="btn btn-blue btn-tall" onClick={this.setTime(120*60*1000)}>2:00</button>
+						<button className="btn btn-blue btn-tall" onClick={this.setTime(150*60*1000)}>2:30</button>
+						<button className="btn btn-blue btn-tall" onClick={this.setTime(180*60*1000)}>3:00</button>
+					</div>
 
-
-					<button onClick={this.close} type="button">
-						Закрыть
-					</button>
+					<div>
+						<button className="btn btn-blue btn-long" onClick={this.close} type="button">
+							Закрыть
+						</button>
+						<button className="btn btn-blue btn-long" onClick={this.clearSlot} disabled={!slotWait && !slotLate}>
+							Очистить
+						</button>
+					</div>
 				</div>
 			</div>
 		)
 	}
 
+	stopPropagation = (event) => {
+		event.stopPropagation();
+	};
+
 	addTime = (time) => {
 		return () => {
 			this.props.addSlotTime(this.props.index, time);
+		}
+	};
+
+	setTime = (time) => {
+		return () => {
+			this.props.setSlotTime(this.props.index, time);
 		}
 	};
 
@@ -69,6 +78,9 @@ class SlotOptionsModal extends Component {
 		slot: PropTypes.object,
 		index: PropTypes.number,
 		closeSlotOptionsModal: PropTypes.func,
+		addSlotTime: PropTypes.func,
+		setSlotTime: PropTypes.func,
+		clearSlot: PropTypes.func,
 	};
 
 }
@@ -86,6 +98,7 @@ function mapDispatchToProps(dispatch) {
 	return bindActionCreators({
 		closeSlotOptionsModal: closeSlotOptionsModal,
 		addSlotTime: addSlotTime,
+		setSlotTime: setSlotTime,
 		clearSlot: clearSlot,
 	}, dispatch)
 }

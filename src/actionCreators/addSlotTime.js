@@ -1,6 +1,6 @@
-import {ADD_SLOT_TIME} from "../constants/actions";
+import {ADD_SLOT_TIMEOUT} from "../constants/actions";
 
 
 export default function(index, time){
-	return {type: ADD_SLOT_TIME, payload: {index, time}};
+	return {type: ADD_SLOT_TIMEOUT, payload: {index, time}};
 }
