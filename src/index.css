@@ -25,7 +25,8 @@ code {
   color: #4047c9;
   border-radius: 10px;
   box-sizing: border-box;
-  margin: 2px;
+  margin: 5px;
+  cursor: pointer;
   outline: none;
   transition: all .1s ease-in-out;
 }
@@ -35,10 +36,12 @@ code {
 .slot-index {
   font-size: 40px;
   text-align: center;
+  vertical-align: middle;
 }
 .slot-time {
   margin-top: 5px;
   font-size: 20px;
+  vertical-align: middle;
   text-align: center;
 }
 .slot.late {
@@ -102,6 +105,18 @@ code {
   transition: all .1s ease-in-out;
 }
 
+.input {
+  border: 2px solid #4047c9;
+  border-radius: 10px;
+  color: #4047c9;
+  background-color: white;
+  padding: 10px;
+  margin: 0 10px;
+  font-size: 20px;
+  transition: all .1s ease-in-out;
+  outline: none;
+}
+
 .btn:disabled {
   color: black;
   background-color: #ddd;
@@ -113,4 +128,33 @@ code {
 
 .btn-tall {
   height: 70px;
+}
+.btn-long {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.qrcode-box.zooming {
+  cursor: zoom-in;
+}
+.qrcode-box.zoom {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: darkgray;
+  justify-content: center;
+  align-items: center;
+}
+.qrcode-box.zooming.zoom {
+  cursor: zoom-out;
+}
+
+.qrcode {
+  display: inline-block;
+}
+.qrcode-box.zoom .qrcode {
+  width: 100vmin !important;
+  height: 100vmin !important;
 }

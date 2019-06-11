@@ -1,20 +1,33 @@
-import React, {Component, Fragment, PureComponent} from "react";
+import React, {Component, createRef} from "react";
 import {connect} from 'react-redux';
 import {bindActionCreators} from "redux";
 import addSlotTime from "../actionCreators/addSlotTime";
 import clearSlot from "../actionCreators/clearSlot";
 import closeSlotOptionsModal from "../actionCreators/closeSlotOptionsModal";
-import openSlotOptionsModal from "../actionCreators/openSlotOptionsModal";
 import setSlotTime from "../actionCreators/setSlotTime";
 import injectDate from "../HOCs/injectDate";
-import {getSlotOptionsModalIndex, getSlots} from "../selectors/selectors";
+import {
+	getSlotOptionsModalIndex,
+	getSlotOptionsModalSlot,
+	getSlotOptionsQrCodeData,
+} from "../selectors/selectors";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import Slot from "./Slot";
+import QRCode from 'qrcode';
 
 class SlotOptionsModal extends Component {
+
+	constructor(props){
+		super(props);
+		this.state = {zoom: false};
+	}
+
+	canvasRef = createRef();
+
 	render() {
-		const {slot, index} = this.props;
+		const {slot, index, qrCodeData} = this.props;
+		const {zoom} = this.state;
 		const modalOpen = index != null;
 		const dateDiff = slot && slot.date ? slot.date - this.props.date : null;
 		const slotWait = dateDiff != null && dateDiff > 0;
@@ -37,7 +50,7 @@ class SlotOptionsModal extends Component {
 						<button className="btn btn-blue btn-tall" onClick={this.setTime(180*60*1000)}>3:00</button>
 					</div>
 
-					<div>
+					<div className="btn-group">
 						<button className="btn btn-blue btn-long" onClick={this.close} type="button">
 							Закрыть
 						</button>
@@ -45,9 +58,33 @@ class SlotOptionsModal extends Component {
 							Очистить
 						</button>
 					</div>
+
+					{ qrCodeData && <div className={classNames("qrcode-box zooming", {"zoom": zoom})} onClick={this.toggleZoom}>
+						<canvas className="qrcode" ref={this.canvasRef}/>
+					</div> }
 				</div>
 			</div>
 		)
+	}
+
+	toggleZoom = () => {
+		this.setState({
+			zoom: !this.state.zoom,
+		});
+	};
+
+	componentDidMount() {
+		const {qrCodeData} = this.props;
+		if (qrCodeData) {
+			QRCode.toCanvas(this.canvasRef.current, qrCodeData);
+		}
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		const {qrCodeData} = this.props;
+		if (qrCodeData && qrCodeData !== prevProps.qrCodeData) {
+			QRCode.toCanvas(this.canvasRef.current, qrCodeData);
+		}
 	}
 
 	stopPropagation = (event) => {
@@ -78,6 +115,7 @@ class SlotOptionsModal extends Component {
 		slot: PropTypes.object,
 		index: PropTypes.number,
 		closeSlotOptionsModal: PropTypes.func,
+		qrCodeData: PropTypes.string,
 		addSlotTime: PropTypes.func,
 		setSlotTime: PropTypes.func,
 		clearSlot: PropTypes.func,
@@ -88,10 +126,12 @@ export default injectDate('date')(connect(mapStateToProps, mapDispatchToProps)(S
 
 function mapStateToProps(state) {
 	const index = getSlotOptionsModalIndex(state);
-	const slots = getSlots(state);
+	const slot = getSlotOptionsModalSlot(state);
+	const qrCodeData = getSlotOptionsQrCodeData(state);
 	return {
 		index: index,
-		slot: slots[index],
+		slot: slot,
+		qrCodeData: qrCodeData,
 	}
 }
 function mapDispatchToProps(dispatch) {
